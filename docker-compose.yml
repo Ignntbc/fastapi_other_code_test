@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # db:
+  #   image: postgres:13
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: db_user
+  #     POSTGRES_PASSWORD: paSs_w0rd/.wR
+  #     POSTGRES_DB: test_project
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data/
+
+  # alembic:
+  #   build: .
+  #   command: alembic upgrade head
+  #   volumes:
+  #     - .:/code
+    # depends_on:
+    #   - db
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    environment:
+      - TZ=Europe/Moscow
+
+# volumes:
+#   postgres_data:

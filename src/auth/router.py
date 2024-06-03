@@ -3,6 +3,7 @@ from datetime import timedelta
 from articles.pydantic_models import Token, TokenData
 from auth.auth import authenticate_user, create_access_token
 from config import ACCESS_TOKEN_EXPIRE_MINUTES
+from db.db import DatabaseManager
 
 router = APIRouter(
     prefix="/auth",
@@ -10,8 +11,9 @@ router = APIRouter(
 )
 
 @router.post("/token", response_model=Token)
-async def login_for_access_token(form_data: TokenData):
-    user_in_db = await authenticate_user(form_data.username, form_data.password)
+async def login_for_access_token(form_data: TokenData,
+                                 db_manager=Depends(DatabaseManager)):
+    user_in_db = await authenticate_user(form_data.username, form_data.password, db_manager)
     if not user_in_db:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

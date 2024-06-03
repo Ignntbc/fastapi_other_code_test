@@ -20,8 +20,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def verify_password(plain_password: str, hashed_password: str):
     return pwd_context.verify(plain_password, hashed_password)
 
-async def authenticate_user( username: str, password: str):
-    db_manager = DatabaseManager()
+async def authenticate_user( username: str, password: str, db_manager: DatabaseManager = Depends(DatabaseManager)):
     users_dict = await db_manager.get_users_dict()
     await db_manager.close()
     user = next((user for user in users_dict if user['name'] == username), None)

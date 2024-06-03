@@ -17,7 +17,7 @@ class User(Base):
     name = Column(String)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
-    role = Column(String)
+    role = Column(String, default='user')
     
     def to_dict(self):
         return {

@@ -5,13 +5,16 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import AsyncSession
 from passlib.context import CryptContext
-from models.db_models import User, Article
-from models.pydantic_models import User_api, Article_api
+from db.db_models import User, Article
+from articles.pydantic_models import User_api, Article_api
 from typing import Optional
 from aiocache import cached, Cache, SimpleMemoryCache
 from aiocache.serializers import PickleSerializer
+from config import REDIS_HOST, REDIS_PORT, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
 
-cache = Cache(Cache.REDIS, endpoint="localhost", port=6379, serializer=PickleSerializer())
+cache = Cache(Cache.REDIS, endpoint=REDIS_HOST, port=REDIS_PORT, serializer=PickleSerializer())
+POOL_SIZE = 250
+
 
 def articles_key_builder(function, self, *args):
     page = args[0] if len(args) > 0 else 'none'
@@ -20,19 +23,12 @@ def articles_key_builder(function, self, *args):
     date = args[3] if len(args) > 3 else 'none'
     return f"get_articles:{page}:{per_page}:{author_id}:{date}"
 
-# engine = create_async_engine('postgresql+asyncpg://maintainer:postgres@185.233.186.104:6101/postgres')
-# Base.metadata.create_all(bind=engine)
-
-# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# def hash_password(password: str):
-#     return pwd_context.hash(password)
 
 
 class DatabaseManager:
     def __init__(self):
-        connection_string = 'postgresql+asyncpg://maintainer:postgres@185.233.186.104:6101/postgres'
-        self.engine = create_async_engine(connection_string, pool_size=250)
+        connection_string = f'postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+        self.engine = create_async_engine(connection_string, pool_size=POOL_SIZE)
         self.async_session_maker = sessionmaker(self.engine, expire_on_commit=False, class_=AsyncSession)
 
     async def select_user(self) -> list:

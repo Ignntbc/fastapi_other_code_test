@@ -1,9 +1,11 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
-from models.pydantic_models import Article_api, ArticleBase, User_api
-from models.db_models import Article
+from articles.pydantic_models import Article_api, ArticleBase, User_api
+from db.db_models import Article
 from auth.auth import get_current_user
 from db.db import DatabaseManager
+from fastapi import Query
+from datetime import date
 
 router = APIRouter(
     prefix="/articles",
@@ -47,8 +49,12 @@ async def delete_article(article_id: int, current_user: User_api = Depends(get_c
     return deleted_article
 
 @router.get("/", response_model=List[Article_api])
-async def read_articles(page: int = 1, per_page: int = 10, author_id: Optional[int] = None, date: Optional[str] = None):
+async def read_articles(page: int = Query(1, ge=1),
+                        per_page: int = Query(10, ge=1, le=200),
+                        author_id: Optional[int] = None,
+                        date_form: Optional[date] = None):
+
     db_manager = DatabaseManager()
-    articles = await db_manager.get_articles(page, per_page, author_id, date)
+    articles = await db_manager.get_articles(page, per_page, author_id, date_form)
     await db_manager.close()
     return articles

@@ -4,8 +4,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from typing import Optional
-from models.pydantic_models import Token, TokenData
-from models.db_models import User
+from articles.pydantic_models import Token, TokenData
+from db.db_models import User
 from db.db import DatabaseManager 
 from config import SECRET_KEY, ALGORITHM
 

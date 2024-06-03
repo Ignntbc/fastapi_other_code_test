@@ -26,7 +26,7 @@ class User_api(UserBase):
     hashed_password: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ArticleBase(BaseModel):
@@ -43,4 +43,4 @@ class Article_api(ArticleBase):
     
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -11,6 +11,8 @@ from fastapi import FastAPI, Depends, HTTPException, status
 #                       ACCESS_TOKEN_EXPIRE_MINUTES
 from auth.router import  router as auth
 from articles.router import router as articles
+import logging
+logging.getLogger('passlib').setLevel(logging.ERROR)
 #pip install -U email-validator
 # секретный ключ для создания и проверки JWT токенов
 

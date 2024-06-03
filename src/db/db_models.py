@@ -1,12 +1,16 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import declarative_base
+from dotenv import load_dotenv
+from config import TABLENAME_U, TABLENAME_A, FOREIGN_KEY_U
+
+load_dotenv()
 
 Base = declarative_base()
 
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = TABLENAME_U
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
@@ -27,15 +31,15 @@ class User(Base):
     
 
 class Article(Base):
-    __tablename__ = "articles"
+    __tablename__ = TABLENAME_A
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     content = Column(String)
     published_date = Column(Date)
-    author_id = Column(Integer, ForeignKey("users.id"))
+    author_id = Column(Integer, ForeignKey(FOREIGN_KEY_U))
 
-    author = relationship("User", back_populates="articles")
+    author = relationship("User", back_populates=TABLENAME_A)
 
     def to_dict(self):
         return {

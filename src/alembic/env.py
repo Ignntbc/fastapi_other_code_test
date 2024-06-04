@@ -28,7 +28,7 @@ target_metadata = Base.metadata
 # ... etc.
 
 
-def run_migrations_offline() -> None:
+def run_migrations_offline(database_url: str) -> None:
     """Run migrations in 'offline' mode.
 
     This configures the context with just a URL
@@ -41,14 +41,10 @@ def run_migrations_offline() -> None:
 
     """
     configuration = config.get_section(config.config_ini_section)
-    if os.environ.get("ENV") == "test":
-       configuration['sqlalchemy.url'] = os.getenv('TEST_DATABASE_URL')
-    else:
-        url = config.get_main_option("sqlalchemy.url")
-        
-        
+    configuration['sqlalchemy.url'] = database_url
+
     context.configure(
-        url=url,
+        url=database_url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -58,7 +54,8 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
-def run_migrations_online() -> None:
+
+def run_migrations_online(database_url: str) -> None:
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine
@@ -66,8 +63,7 @@ def run_migrations_online() -> None:
 
     """
     configuration = config.get_section(config.config_ini_section)
-    if os.getenv('ENV') == 'test':
-        configuration['sqlalchemy.url'] = os.getenv('TEST_DATABASE_URL')
+    configuration['sqlalchemy.url'] = database_url
 
     connectable = engine_from_config(
         configuration,
@@ -84,7 +80,11 @@ def run_migrations_online() -> None:
             context.run_migrations()
 
 
+
+
 if context.is_offline_mode():
-    run_migrations_offline()
+    run_migrations_offline(os.getenv('DATABASE_URL'))
+    run_migrations_offline(os.getenv('TEST_DATABASE_URL'))
 else:
-    run_migrations_online()
+    run_migrations_online(os.getenv('DATABASE_URL'))
+    run_migrations_online(os.getenv('TEST_DATABASE_URL'))

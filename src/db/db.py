@@ -1,4 +1,3 @@
-import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.future import select
 from sqlalchemy.orm import sessionmaker
@@ -10,6 +9,7 @@ from aiocache.serializers import PickleSerializer
 from config import REDIS_HOST, REDIS_PORT, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
 
 cache = Cache(Cache.REDIS, endpoint=REDIS_HOST, port=REDIS_PORT, serializer=PickleSerializer())
+
 POOL_SIZE = 250
 
 

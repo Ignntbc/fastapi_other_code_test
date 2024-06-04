@@ -1,25 +1,33 @@
 version: '3.8'
 
 services:
-  # db:
-  #   image: postgres:13
-  #   restart: always
-  #   environment:
-  #     POSTGRES_USER:
-  #     POSTGRES_PASSWORD:
-  #     POSTGRES_DB:
-  #   ports:
-  #     - ""
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data/
+  db:
+    container_name: db
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "maintainer"
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  # alembic:
-  #   build: .
-  #   command: alembic upgrade head
-  #   volumes:
-  #     - .:/code
-    # depends_on:
-    #   - db
+  alembic:
+    build: 
+      context: .
+      dockerfile: src/alembic/Dockerfile
+    command: alembic upgrade head
+    ports:
+      - "80:80"
+    working_dir: /app/src   
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
   redis:
     container_name: redis
     image: "redis:alpine"
@@ -28,5 +36,25 @@ services:
     environment:
       - TZ=Europe/Moscow
 
-# volumes:
-#   postgres_data:
+  web:
+    container_name: web
+    build: .
+    working_dir: /app/src 
+    ports:
+      - "90:90"
+    volumes:
+      - .:/app
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "90"]
+
+  tests:
+    container_name: tests
+    build: .
+    working_dir: /app/src
+    volumes:
+      - .:/app
+    command: ["pytest", "tests.py"]
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

@@ -49,8 +49,8 @@ def test_read_article_not_found():
 
 def test_create_article(access_token):
     test_article_data = {
-"title" :"9 Article TEST ARTICLE",
-"content":"This is the content of the nine article.",
+"title" :"Article TEST ARTICLE",
+"content":"This is the content of the test article.",
 "author_id": 2,
 "published_date": "2022-01-09"
 }

@@ -55,6 +55,7 @@ services:
     command: ["pytest","-v", "tests.py"]
     depends_on:
       - db
+      - alembic
 
 volumes:
   postgres_data:

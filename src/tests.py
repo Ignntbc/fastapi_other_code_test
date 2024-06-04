@@ -7,7 +7,7 @@ from db.db import DatabaseManager
 
 def override_db_manager():
     """Функция для переопределения зависимости DatabaseManager в тестах"""
-    return DatabaseManager(test_mode=True) 
+    return DatabaseManager(test_mode=True)
 
 app.dependency_overrides[DatabaseManager] = override_db_manager
 client = TestClient(app)

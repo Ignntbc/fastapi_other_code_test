@@ -52,7 +52,7 @@ services:
     working_dir: /app/src
     volumes:
       - .:/app
-    command: ["pytest", "tests.py"]
+    command: ["pytest","-v", "tests.py"]
     depends_on:
       - db
 

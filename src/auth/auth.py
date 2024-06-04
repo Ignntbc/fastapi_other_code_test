@@ -4,23 +4,20 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from typing import Optional
-from articles.pydantic_models import Token, TokenData
-from db.db_models import User
-from db.db import DatabaseManager 
+from db.db import DatabaseManager
 from config import SECRET_KEY, ALGORITHM
 
-# SECRET_KEY = "my-secret-key"
-# ALGORITHM = "HS256"
-# ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain_password: str, hashed_password: str):
+    """Функция для проверки пароля пользователя"""
     return pwd_context.verify(plain_password, hashed_password)
 
 async def authenticate_user( username: str, password: str, db_manager: DatabaseManager = Depends(DatabaseManager)):
+    """ Функция для аутентификации пользователя"""
     users_dict = await db_manager.get_users_dict()
     await db_manager.close()
     user = next((user for user in users_dict if user['name'] == username), None)
@@ -31,6 +28,7 @@ async def authenticate_user( username: str, password: str, db_manager: DatabaseM
     return user
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    """Функция для создания токена доступа"""
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
@@ -41,6 +39,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
+    """Функция для получения текущего пользователя"""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",

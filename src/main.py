@@ -3,7 +3,7 @@ from auth.router import  router as auth
 from articles.router import router as articles
 import logging
 logging.getLogger('passlib').setLevel(logging.ERROR)
-#pip install -U email-validator
+
 
 
 

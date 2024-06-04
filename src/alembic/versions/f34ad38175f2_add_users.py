@@ -8,8 +8,7 @@ Create Date: 2024-05-28 19:14:51.738858
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.sql import table, column
-from sqlalchemy import String, Integer, DateTime
-from datetime import datetime
+from sqlalchemy import String, Integer
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

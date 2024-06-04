@@ -42,14 +42,14 @@ async def update_article(article_id: int, article: ArticleBase,
                           current_user: User_api = Depends(get_current_user),
                           db_manager: DatabaseManager = Depends(DatabaseManager)
                           ): 
-    user_id = current_user['id']
-    author_id = await db_manager.get_user_id_by_article_id(article_id)
-    if current_user['role'] != 'admin' and user_id != author_id:
-        raise HTTPException(status_code=403, detail="Not enough permissions")
     updated_article = await db_manager.update_article(article_id, article)
-    await db_manager.close()
     if updated_article is None:
         raise HTTPException(status_code=404, detail="Article not found")
+    user_id = current_user['id']
+    author_id = await db_manager.get_user_id_by_article_id(article_id)
+    await db_manager.close()
+    if current_user['role'] != 'admin' and user_id != author_id:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
     return updated_article
 
 @router.delete("/{article_id}", response_model=Article_api)
